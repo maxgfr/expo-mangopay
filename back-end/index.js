@@ -84,8 +84,8 @@ app.post('/addBankAccount', (req, res, next) => {
 
 app.post('/createCardRegistration', (req, res, next) => {
   MangoApi.CardRegistrations.create({
-  "UserId": req.body.user_id,
-  "Currency": req.body.currency
+    "UserId": req.body.user_id,
+    "Currency": req.body.currency
   }).then((resultat) => {
     console.log(resultat)
     res.json(resultat);
@@ -180,7 +180,7 @@ app.post('/transfer', (req, res, next) => {
   });
 });
 
-app.post('/transfer-refund', (req, res, next) => {
+app.post('/transferRefund', (req, res, next) => {
   MangoApi.Transfers.createRefund(req.body.transfer_id, {
     "AuthorId": req.body.author_id,
     "DebitedFunds": {
