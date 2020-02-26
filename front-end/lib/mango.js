@@ -1,3 +1,6 @@
+import { AuthSession } from 'expo';
+
+const RETURN_URL= AuthSession.getRedirectUrl();
 const BASE_URL="http://localhost:3000/";
 
 export default class MangoConnector {
@@ -87,14 +90,67 @@ export default class MangoConnector {
       });
     }
 
-    createPreAuthorization(author_id, debited_currency, debited_amount, card_id, return_url, statement_descriptor) {
+    postCardInfo(cardAccessKey, cardRegistrationURL, preregistrationData, cardNumber, cardExpirationDate, cardCvx) {
+      return new Promise((resolve, reject) => {
+        var body = `accessKeyRef=${cardAccessKey}&data=${preregistrationData}&cardNumber=${cardNumber}&cardExpirationDate=${cardExpirationDate}&cardCvx=${cardCvx}`;
+        //console.log(body);
+        fetch(cardRegistrationURL, {
+          body: body,
+          headers: { 'Content-type': 'x-www-form-urlencoded' },
+          method: "POST"
+        }).then((response) => response.text()).then((responseText) => resolve(responseText)).catch((err) => reject(err));
+      });
+    }
+
+    updateCardRegistration(card_registration_object, registration_data) {
+      return new Promise((resolve, reject) => {
+        card_registration_object["RegistrationData"] = registration_data;
+        var body = {
+          card_registration_object: card_registration_object
+        }
+        fetch(BASE_URL+"updateCardRegistration", {
+          body: JSON.stringify(body),
+          headers: { 'Content-type': 'application/json' },
+          method: "POST"
+        }).then((response) => response.json()).then((responseJson) => resolve(responseJson)).catch((err) => reject(err));
+      });
+    }
+
+    updateCardRegistration(card_registration_object, registration_data) {
+      return new Promise((resolve, reject) => {
+        card_registration_object["RegistrationData"] = registration_data;
+        var body = {
+          card_registration_object: card_registration_object
+        }
+        fetch(BASE_URL+"updateCardRegistration", {
+          body: JSON.stringify(body),
+          headers: { 'Content-type': 'application/json' },
+          method: "POST"
+        }).then((response) => response.json()).then((responseJson) => resolve(responseJson)).catch((err) => reject(err));
+      });
+    }
+
+    getCardRegistration(card_registration_id) {
+      return new Promise((resolve, reject) => {
+        var body = {
+          card_registration_id: card_registration_id
+        }
+        fetch(BASE_URL+"getCardRegistration", {
+          body: JSON.stringify(body),
+          headers: { 'Content-type': 'application/json' },
+          method: "POST"
+        }).then((response) => response.json()).then((responseJson) => resolve(responseJson)).catch((err) => reject(err));
+      });
+    }
+
+    createPreAuthorization(author_id, debited_currency, debited_amount, card_id, statement_descriptor) {
       return new Promise((resolve, reject) => {
         var body = {
           author_id: author_id,
           debited_currency: debited_currency,
           debited_amount: debited_amount,
           card_id: card_id,
-          return_url: return_url,
+          return_url: RETURN_URL,
           statement_descriptor: statement_descriptor
         }
         fetch(BASE_URL+"createPreAuthorization", {
@@ -105,7 +161,7 @@ export default class MangoConnector {
       });
     }
 
-    createDirectPayin(author_id, credited_user_id, wallet_id, debited_currency, debited_amount, fee_currency, fee_amount, preauthorization_id) {
+    createDirectPayin(author_id, credited_user_id, wallet_id, debited_currency, debited_amount, fee_currency, fee_amount, preauthorization_id, payment_type, execution_type, card_id) {
       return new Promise((resolve, reject) => {
         var body = {
           author_id: author_id,
@@ -115,7 +171,11 @@ export default class MangoConnector {
           debited_amount: debited_amount,
           fee_currency: fee_currency,
           fee_amount: fee_amount,
-          preauthorization_id: preauthorization_id
+          preauthorization_id: preauthorization_id,
+          payment_type: payment_type,
+          execution_type: execution_type,
+          return_url: RETURN_URL,
+          card_id: card_id
         }
         fetch(BASE_URL+"createDirectPayin", {
           body: JSON.stringify(body),
@@ -201,12 +261,12 @@ export default class MangoConnector {
       });
     }
 
-    addKYCDoc(type, user_id, document) {
+    addKYCDoc(type, user_id, doc) {
       return new Promise((resolve, reject) => {
         var body = {
           type: type,
           user_id: user_id,
-          document: document
+          document: doc
         }
         fetch(BASE_URL+"addKYCDoc", {
           body: JSON.stringify(body),

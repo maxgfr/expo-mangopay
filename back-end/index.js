@@ -72,7 +72,8 @@ app.post('/addBankAccount', (req, res, next) => {
     },
     "OwnerName": req.body.owner_name,
     "IBAN": req.body.iban,
-    "BIC": req.body.bic
+    "BIC": req.body.bic,
+    "Type": "IBAN"
   }).then((resultat) => {
     console.log(resultat)
     res.json(resultat);
@@ -95,8 +96,30 @@ app.post('/createCardRegistration', (req, res, next) => {
   });
 });
 
+app.post('/updateCardRegistration', (req, res, next) => {
+  MangoApi.CardRegistrations.update(req.body.card_registration_object)
+  .then((resultat) => {
+    console.log(resultat)
+    res.json(resultat);
+  }).catch((err) => {
+    console.log(err);
+    res.json(err);
+  });
+});
+
+app.post('/getCardRegistration', (req, res, next) => {
+  MangoApi.CardRegistrations.get(req.body.card_registration_id)
+  .then((resultat) => {
+    console.log(resultat)
+    res.json(resultat);
+  }).catch((err) => {
+    console.log(err);
+    res.json(err);
+  });
+});
+
 app.post('/createPreAuthorization', (req, res, next) => {
-  MangoApi.CardRegistrations.create({
+  MangoApi.CardPreAuthorizations.create({
     "AuthorId": req.body.author_id,
     "DebitedFunds": {
       "Currency": req.body.debited_currency,
@@ -116,6 +139,8 @@ app.post('/createPreAuthorization', (req, res, next) => {
 
 app.post('/createDirectPayin', (req, res, next) => {
   MangoApi.PayIns.create({
+    "PaymentType": req.body.payment_type,
+    "ExecutionType": req.body.execution_type,
     "AuthorId": req.body.author_id,
     "CreditedUserId": req.body.credited_user_id,
     "CreditedWalletId": req.body.wallet_id,
@@ -127,7 +152,9 @@ app.post('/createDirectPayin', (req, res, next) => {
       "Currency": req.body.fee_currency,
       "Amount": req.body.fee_amount,
     },
-    "PreauthorizationId": req.body.preauthorization_id
+    "PreauthorizationId": req.body.preauthorization_id,
+    "SecureModeReturnURL": req.body.return_url,
+    "CardId": req.body.card_id
   }).then((resultat) => {
     console.log(resultat)
     res.json(resultat);
@@ -138,7 +165,7 @@ app.post('/createDirectPayin', (req, res, next) => {
 });
 
 app.post('/refund', (req, res, next) => {
-  MangoApi.Refunds.create(req.body.payin_id, {
+  MangoApi.PayIns.createRefund(req.body.payin_id, {
     "AuthorId": req.body.author_id,
     "DebitedFunds": {
       "Currency": req.body.debited_currency,
