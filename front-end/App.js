@@ -20,6 +20,9 @@ export default function App() {
   const [preAuthorizationId, setPreAuthorizationId] = useState('');
   const [payinId, setPayinId] = useState('');
   const [refundId, setRefundId] = useState('');
+  const [transferId, setTransferId] = useState('');
+  const [transferRefundId, setTransferRefundId] = useState('');
+  const [payoutId, setPayoutId] = useState('');
 
   useEffect(() => {
   }, [])
@@ -66,7 +69,7 @@ export default function App() {
 
   _onAddBankAccount = () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.addBankAccount(naturalUserId, "Maxime Gfr", "FR7630004000031234567890143", "CRLYFRPP", "1 Mangopay Street", "Paris", "IDF", "75001", "FR").then((res) => {
+    mangopay.addBankAccount(otherNaturalUserId, "Maxime Gfr", "FR7630004000031234567890143", "CRLYFRPP", "1 Mangopay Street", "Paris", "IDF", "75001", "FR").then((res) => {
       //console.log(res);
       setBankAccountId(res.Id)
     }).catch((err) => {
@@ -150,31 +153,29 @@ export default function App() {
 
   _onTransfer = () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.createNaturalUser(otherNaturalUserId, naturalUserId, "EUR", 200, "EUR", 0, debited_wallet_id, credited_wallet_id).then((res) => {
+    mangopay.createNaturalUser(otherNaturalUserId, naturalUserId, "EUR", 200, "EUR", 0, walletId, otherWalletId).then((res) => {
       //console.log(res);
-      setNaturalUserId(res.Id)
+      setTransferId(res.Id)
     }).catch((err) => {
       console.log(err);
     })
   }
 
   _onTransferRefund = () => {
-    transferRefund(transfer_id, author_id, debited_currency, debited_amount, fee_currency, fee_amount)
     let mangopay = MangoConnector.getInstance();
-    mangopay.createNaturalUser("Maxime", "Golfier", "Place de la Concorde", "Paris", "IDF", '75001', "FR", 1463496101, "FR", "FR", "maxime@gmail.com").then((res) => {
+    mangopay.transferRefund(transferId, otherNaturalUserId, "EUR", 200, "EUR", 0).then((res) => {
       //console.log(res);
-      setNaturalUserId(res.Id)
+      setTransferRefundId(res.Id)
     }).catch((err) => {
       console.log(err);
     })
   }
 
   _onPayout = () => {
-    payout(author_id, debited_currency, debited_amount, fee_currency, fee_amount, bank_account_id, debited_wallet_id, bank_wire_ref)
     let mangopay = MangoConnector.getInstance();
-    mangopay.createNaturalUser("Maxime", "Golfier", "Place de la Concorde", "Paris", "IDF", '75001', "FR", 1463496101, "FR", "FR", "maxime@gmail.com").then((res) => {
+    mangopay.payout(otherNaturalUserId, "EUR", 600, "EUR", 100, bankAccountId, otherWalletId, "REFUND").then((res) => { // 10 characters payment
       //console.log(res);
-      setNaturalUserId(res.Id)
+      setPayoutId(res.Id)
     }).catch((err) => {
       console.log(err);
     })
@@ -192,7 +193,7 @@ export default function App() {
   }
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', marginHorizontal: 20 }}>
+    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', marginHorizontal: 20, padding: 50 }}>
 
       <Button onPress={_onCreateNaturalUser} title="1.1 - Create customer 1"/>
       <Text>{naturalUserId}</Text>
@@ -227,7 +228,14 @@ export default function App() {
       <Button onPress={_onRefund} title="9 - Refund"/>
       <Text>{refundId}</Text>
 
+      <Button onPress={_onTransfer} title="10 - Transfer"/>
+      <Text>{transferId}</Text>
 
+      <Button onPress={_onTransferRefund} title="11 - Transfer Refund"/>
+      <Text>{transferRefundId}</Text>
+
+      <Button onPress={_onPayout} title="12 - Payout"/>
+      <Text>{payoutId}</Text>
 
 
 
