@@ -197,7 +197,7 @@ app.post('/transfer', (req, res, next) => {
       "Amount": req.body.fee_amount
     },
     "DebitedWalletId": req.body.debited_wallet_id,
-    "CreditedWalletId": req.bodt.credited_wallet_id
+    "CreditedWalletId": req.body.credited_wallet_id
   }).then((resultat) => {
     console.log(resultat)
     res.json(resultat);
@@ -239,8 +239,9 @@ app.post('/payout', (req, res, next) => {
       "Amount": req.body.fee_amount
     },
     "BankAccountId": req.body.bank_account_id,
-    "DebitedWalletId": res.body.debited_wallet_id,
-    "BankWireRef": req.body.bank_wire_ref
+    "DebitedWalletId": req.body.debited_wallet_id,
+    "BankWireRef": req.body.bank_wire_ref,
+    "PaymentType": "BANK_WIRE"
   }).then((resultat) => {
     console.log(resultat)
     res.json(resultat);

@@ -23,6 +23,7 @@ export default function App() {
   const [transferId, setTransferId] = useState('');
   const [transferRefundId, setTransferRefundId] = useState('');
   const [payoutId, setPayoutId] = useState('');
+  const [kycId, setKycId] = useState('');
 
   useEffect(() => {
   }, [])
@@ -153,7 +154,7 @@ export default function App() {
 
   _onTransfer = () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.createNaturalUser(otherNaturalUserId, naturalUserId, "EUR", 200, "EUR", 0, walletId, otherWalletId).then((res) => {
+    mangopay.transfer(otherNaturalUserId, naturalUserId, "EUR", 200, "EUR", 0, otherWalletId, walletId).then((res) => {
       //console.log(res);
       setTransferId(res.Id)
     }).catch((err) => {
@@ -173,7 +174,7 @@ export default function App() {
 
   _onPayout = () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.payout(otherNaturalUserId, "EUR", 600, "EUR", 100, bankAccountId, otherWalletId, "REFUND").then((res) => { // 10 characters payment
+    mangopay.payout(otherNaturalUserId, "EUR", 600, "EUR", 100, bankAccountId, otherWalletId, "Refund X").then((res) => { // 10 characters payment
       //console.log(res);
       setPayoutId(res.Id)
     }).catch((err) => {
@@ -182,11 +183,10 @@ export default function App() {
   }
 
   _onAddKYCDoc = () => {
-    addKYCDoc(type, user_id, doc)
     let mangopay = MangoConnector.getInstance();
-    mangopay.createNaturalUser("Maxime", "Golfier", "Place de la Concorde", "Paris", "IDF", '75001', "FR", 1463496101, "FR", "FR", "maxime@gmail.com").then((res) => {
+    mangopay.addKYCDoc(type, user_id, doc).then((res) => {
       //console.log(res);
-      setNaturalUserId(res.Id)
+      setKycId(res.Id)
     }).catch((err) => {
       console.log(err);
     })
@@ -225,20 +225,17 @@ export default function App() {
       <Button onPress={_onCreateDirectPayin} title="8 - Create a Direct Payin"/>
       <Text>{payinId}</Text>
 
-      <Button onPress={_onRefund} title="9 - Refund"/>
+      <Button onPress={_onRefund} title="9.1 - Refund"/>
       <Text>{refundId}</Text>
+
+      <Button onPress={_onPayout} title="9.2 - Payout"/>
+      <Text>{payoutId}</Text>
 
       <Button onPress={_onTransfer} title="10 - Transfer"/>
       <Text>{transferId}</Text>
 
       <Button onPress={_onTransferRefund} title="11 - Transfer Refund"/>
       <Text>{transferRefundId}</Text>
-
-      <Button onPress={_onPayout} title="12 - Payout"/>
-      <Text>{payoutId}</Text>
-
-
-
 
     </ScrollView>
   );
