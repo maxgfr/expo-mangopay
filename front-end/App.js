@@ -30,7 +30,7 @@ export default function App() {
 
   _onCreateNaturalUser = () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.createNaturalUser("Maxime", "Golfier", "Place de la Concorde", "Paris", "IDF", '75001', "FR", 1463496101, "FR", "FR", "maxime@gmail.com").then((res) => {
+    mangopay.createNaturalUser("Max", "Ime", "Place de la Concorde", "Paris", "IDF", '75001', "FR", 1463496101, "FR", "FR", "maxime@gmail.com").then((res) => {
       //console.log(res);
       setNaturalUserId(res.Id)
     }).catch((err) => {
@@ -40,7 +40,7 @@ export default function App() {
 
   _onCreateOtherNaturalUser = () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.createNaturalUser("Max", "Gfr", "Place Inconnu", "Paris", "IDF", '75001', "FR", 1463496101, "FR", "FR", "max@gmail.com").then((res) => {
+    mangopay.createNaturalUser("Tho", "Mas", "Place Inconnu", "Paris", "IDF", '75001', "FR", 1463496101, "FR", "FR", "max@gmail.com").then((res) => {
       //console.log(res);
       setOtherNaturalUserId(res.Id)
     }).catch((err) => {
