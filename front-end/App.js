@@ -134,7 +134,7 @@ export default function App() {
 
   _onCreateDirectPayin = () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.createDirectPayin(naturalUserId, otherNaturalUserId, walletId, "EUR", 1000, "EUR", 100, preAuthorizationId, "CARD", "DIRECT", cardId).then((res) => {
+    mangopay.createDirectPayin(naturalUserId, otherNaturalUserId, otherWalletId, "EUR", 1000, "EUR", 100, preAuthorizationId, "CARD", "DIRECT", cardId).then((res) => {
       //console.log(res);
       setPayinId(res.Id)
     }).catch((err) => {
