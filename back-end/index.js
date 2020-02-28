@@ -14,8 +14,8 @@ const MangoApi = new mangopay({
 const app = express();
 const port = 3000;
 
-app.use(bodyParser.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
-app.use(bodyParser.json()); // parse application/json
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true })); // parse application/x-www-form-urlencoded
+app.use(bodyParser.json({limit: '50mb', extended: true})); // parse application/json
 app.use(cors());
 
 app.get('/', (req, res, next) => {
@@ -258,6 +258,7 @@ app.post('/addKYCDoc', (req, res, next) => {
     console.log(resultat)
     return MangoApi.Users.createKycPageFromFile(req.body.user_id, resultat.id, req.body.document);
   }).then((resultat) => {
+    console.log(resultat)
     return MangoApi.Users.createKycDocument(req.body.user_id, {
       "Id": resultat.id,
       "Status": "VALIDATION_ASKED"

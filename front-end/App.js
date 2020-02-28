@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, Button, Text } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
 import MangoConnector from './lib/mango';
 
 export default function App() {
@@ -182,14 +185,37 @@ export default function App() {
     })
   }
 
-  _onAddKYCDoc = () => {
-    let mangopay = MangoConnector.getInstance();
-    mangopay.addKYCDoc(type, user_id, doc).then((res) => {
-      //console.log(res);
-      setKycId(res.Id)
-    }).catch((err) => {
-      console.log(err);
-    })
+  _onAddKYCDoc = async () => {
+
+    if (Constants.platform.ios) {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!');
+        return;
+      }
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true
+    });
+
+    //console.log(result);
+
+    if (!result.cancelled) {
+      // The maximum size per page is about 7MB (or 10MB when base64encoded). The following formats are accepted for the documents : .pdf, .jpeg, .jpg, .gif and .png. The minimum size is 1Kb.
+      let mangopay = MangoConnector.getInstance();
+      mangopay.addKYCDoc("IDENTITY_PROOF", otherNaturalUserId, result.base64).then((res) => {
+        //console.log(res);
+        setKycId(res.Id)
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
+
   }
 
   return (
@@ -207,35 +233,38 @@ export default function App() {
       <Button onPress={_onCreateOtherWallet} title="2.2 - Create wallet 2"/>
       <Text>{otherWalletId}</Text>
 
-      <Button onPress={_onAddBankAccount} title="3 - Add a bank account"/>
+      <Button onPress={_onAddBankAccount} title="3 - Add a bank account for customer 2"/>
       <Text>{bankAccountId}</Text>
 
-      <Button onPress={_onCardRegistration} title="4 - Card Registration"/>
+      <Button onPress={_onCardRegistration} title="4.1 - Card Registration"/>
       <Text>{cardRegistrationId}</Text>
 
-      <Button onPress={_onPostCardInfo} title="5 - Post Card Info"/>
+      <Button onPress={_onPostCardInfo} title="4.2 - Post Card Info"/>
       <Text>{postCardInfoId}</Text>
 
-      <Button onPress={_onUpdateCardRegistration} title="6 - Update Card Registration"/>
+      <Button onPress={_onUpdateCardRegistration} title="4.3 - Update Card Registration"/>
       <Text>{cardId}</Text>
 
-      <Button onPress={_onCreatePreAuthorization} title="7 - Create PreAuthorization"/>
+      <Button onPress={_onCreatePreAuthorization} title="5 - Create PreAuthorization"/>
       <Text>{preAuthorizationId}</Text>
 
-      <Button onPress={_onCreateDirectPayin} title="8 - Create a Direct Payin"/>
+      <Button onPress={_onCreateDirectPayin} title="6 - Create a Direct Payin"/>
       <Text>{payinId}</Text>
 
-      <Button onPress={_onRefund} title="9.1 - Refund"/>
+      <Button onPress={_onRefund} title="7 - Refund"/>
       <Text>{refundId}</Text>
 
-      <Button onPress={_onPayout} title="9.2 - Payout"/>
-      <Text>{payoutId}</Text>
-
-      <Button onPress={_onTransfer} title="10 - Transfer"/>
+      <Button onPress={_onTransfer} title="8 - Transfer"/>
       <Text>{transferId}</Text>
 
-      <Button onPress={_onTransferRefund} title="11 - Transfer Refund"/>
+      <Button onPress={_onTransferRefund} title="9 - Transfer Refund"/>
       <Text>{transferRefundId}</Text>
+
+      <Button onPress={_onAddKYCDoc} title="10 - Add KYC Document"/>
+      <Text>{kycId}</Text>
+
+      <Button onPress={_onPayout} title="11 - Payout"/>
+      <Text>{payoutId}</Text>
 
     </ScrollView>
   );
