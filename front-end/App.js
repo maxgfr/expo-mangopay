@@ -97,7 +97,7 @@ export default function App() {
 
   _onPostCardInfo = () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.postCardInfo(cardAccessKey, cardRegistrationURL, preregistrationData, "4706750000000009", "1222", "123").then((res) => {
+    mangopay.postCardInfo(cardAccessKey, cardRegistrationURL, preregistrationData, "4970105715165150", "1222", "123").then((res) => {
       //console.log(res);
       setPostCardInfoId(res)
     }).catch((err) => {
@@ -127,7 +127,7 @@ export default function App() {
 
   _onCreatePreAuthorization = () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.createPreAuthorization(naturalUserId, "EUR", 1000, cardId, "Payment").then((res) => { // 10 characters payment
+    mangopay.createPreAuthorization(naturalUserId, "EUR", 10000, cardId, "Payment").then((res) => { // 10 characters payment
       //console.log(res);
       setPreAuthorizationId(res.Id)
     }).catch((err) => {
@@ -137,7 +137,7 @@ export default function App() {
 
   _onCreateDirectPayin = () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.createDirectPayin(naturalUserId, otherNaturalUserId, otherWalletId, "EUR", 1000, "EUR", 100, preAuthorizationId, "CARD", "DIRECT", cardId).then((res) => {
+    mangopay.createDirectPayin(naturalUserId, otherNaturalUserId, otherWalletId, "EUR", 10000, "EUR", 1000, preAuthorizationId, "CARD", "DIRECT", cardId).then((res) => {
       //console.log(res);
       setPayinId(res.Id)
     }).catch((err) => {

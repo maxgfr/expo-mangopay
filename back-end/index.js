@@ -4,15 +4,17 @@ const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const dotenv = require('dotenv').config();
 const mangopay = require('mangopay2-nodejs-sdk');
-const MangoApi = new mangopay({
-    clientId: process.env.MANGOPAY_CLIENT_ID,
-    clientApiKey: process.env.MANGOPAY_API_KEY,
-    baseUrl: "https://api.sandbox.mangopay.com"
-    // baseUrl: 'https://api.mangopay.com'
-});
-
 const app = express();
-const port = 3000;
+const PORT = 3000;
+const MANGO_API_URL = "https://api.sandbox.mangopay.com" // 'https://api.mangopay.com'
+const MANGO_CLIENT_ID = process.env.MANGOPAY_CLIENT_ID;
+const MANGO_CLIENT_API_KEY = process.env.MANGOPAY_API_KEY;
+const MANGO_API_VERSION = "v2.01";
+const MangoApi = new mangopay({
+    clientId: MANGO_CLIENT_ID,
+    clientApiKey: MANGO_CLIENT_API_KEY,
+    baseUrl: MANGO_API_URL
+});
 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true })); // parse application/x-www-form-urlencoded
 app.use(bodyParser.json({limit: '50mb', extended: true})); // parse application/json
@@ -252,15 +254,30 @@ app.post('/payout', (req, res, next) => {
 });
 
 app.post('/addKYCDoc', (req, res, next) => {
+  var ressource_id = '';
   MangoApi.Users.createKycDocument(req.body.user_id, {
     "Type": req.body.type
   }).then((resultat) => {
     console.log(resultat)
-    return MangoApi.Users.createKycPageFromFile(req.body.user_id, resultat.id, req.body.document);
-  }).then((resultat) => {
+    ressource_id = resultat.Id;
+    /*return fetch(MANGO_API_URL+`/${MANGO_API_VERSION}/${MANGO_CLIENT_ID}/users/${resultat.UserId}/kyc/documents/${resultat.Id}/pages/`, {
+      body: JSON.stringify({"File": base64_file}),
+      headers: {
+        'Authorization': 'Basic ' + (Buffer.from(MANGO_CLIENT_ID + ':' + MANGO_CLIENT_API_KEY).toString('base64')),
+        'Content-Type': 'application/json'
+      },
+      method: "POST"
+    })
+    */
+    var KycPage = new MangoApi.models.KycPage({
+      "File": req.body.file_base64_encoded
+    });
+    return MangoApi.Users.createKycPage(resultat.UserId, resultat.Id, KycPage)
+  })
+  .then((resultat) => {
     console.log(resultat)
-    return MangoApi.Users.createKycDocument(req.body.user_id, {
-      "Id": resultat.id,
+    return MangoApi.Users.updateKycDocument(req.body.user_id, {
+      "Id": ressource_id,
       "Status": "VALIDATION_ASKED"
     });
   }).then((resultat) => {
@@ -272,4 +289,4 @@ app.post('/addKYCDoc', (req, res, next) => {
   });
 });
 
-app.listen(port, () => console.log(`The application is listening on port ${port}!`))
+app.listen(PORT, () => console.log(`The application is listening on port ${PORT}!`))

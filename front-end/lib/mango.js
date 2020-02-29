@@ -261,12 +261,12 @@ export default class MangoConnector {
       });
     }
 
-    addKYCDoc(type, user_id, doc) {
+    addKYCDoc(type, user_id, file_base64_encoded) {
       return new Promise((resolve, reject) => {
         var body = {
           type: type,
           user_id: user_id,
-          document: doc
+          file_base64_encoded: file_base64_encoded
         }
         fetch(BASE_URL+"addKYCDoc", {
           body: JSON.stringify(body),
