@@ -3,6 +3,7 @@ import { ScrollView, Button, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
+import * as WebBrowser from 'expo-web-browser';
 import MangoConnector from './lib/mango';
 
 export default function App() {
@@ -97,7 +98,7 @@ export default function App() {
 
   _onPostCardInfo = () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.postCardInfo(cardAccessKey, cardRegistrationURL, preregistrationData, "4970105715165150", "1222", "123").then((res) => {
+    mangopay.postCardInfo(cardAccessKey, cardRegistrationURL, preregistrationData, "4970105444347681", "1222", "123").then((res) => {
       //console.log(res);
       setPostCardInfoId(res)
     }).catch((err) => {
@@ -135,11 +136,24 @@ export default function App() {
     })
   }
 
-  _onCreateDirectPayin = () => {
+  _onCreateDirectPayin = async () => {
     let mangopay = MangoConnector.getInstance();
-    mangopay.createDirectPayin(naturalUserId, otherNaturalUserId, otherWalletId, "EUR", 10000, "EUR", 1000, preAuthorizationId, "CARD", "DIRECT", cardId).then((res) => {
+    mangopay.createDirectPayin(naturalUserId, otherNaturalUserId, otherWalletId, "EUR", 10000, "EUR", 1000, preAuthorizationId, "CARD", "DIRECT", cardId).then(async (res) => {
       //console.log(res);
-      setPayinId(res.Id)
+      if(res.Status == 'FAILED') {
+        setPayinId('FAILED')
+      } else {
+        if(res.SecureModeNeeded && res.SecureModeRedirectURL) {
+          let result = await WebBrowser.openBrowserAsync(res.SecureModeRedirectURL);
+          if(result.type != "cancel") {
+            setPayinId(res.Id)
+          } else {
+            setPayinId('FAILED')
+          }
+        } else {
+          setPayinId(res.Id)
+        }
+      }
     }).catch((err) => {
       console.log(err);
     })

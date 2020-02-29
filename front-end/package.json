@@ -15,7 +15,8 @@
     "react-native-web": "~0.11.7",
     "expo-permissions": "~8.0.0",
     "expo-constants": "~8.0.0",
-    "expo-image-picker": "~8.0.1"
+    "expo-image-picker": "~8.0.1",
+    "expo-web-browser": "~8.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
