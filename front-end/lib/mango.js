@@ -40,6 +40,24 @@ export default class MangoConnector {
       });
     }
 
+    createNaturalUserSoft(first_name, last_name, birthday, nationality, country_of_residence, email) {
+      return new Promise((resolve, reject) => {
+        var body = {
+          first_name: first_name,
+          last_name: last_name,
+          birthday: birthday,
+          nationality: nationality,
+          country_of_residence: country_of_residence,
+          email: email
+        }
+        fetch(BASE_URL+"createNaturalUser", {
+          body: JSON.stringify(body),
+          headers: { 'Content-type': 'application/json' },
+          method: "POST"
+        }).then((response) => response.json()).then((responseJson) => resolve(responseJson)).catch((err) => reject(err));
+      });
+    }
+
     createWallet(owners, description, currency) {
       return new Promise((resolve, reject) => {
         var body = {

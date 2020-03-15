@@ -49,6 +49,24 @@ app.post('/createNaturalUser', (req, res, next) => {
   });
 });
 
+app.post('/createNaturalUserSoft', (req, res, next) => {
+  MangoApi.Users.create({
+    "FirstName": req.body.first_name,
+    "LastName": req.body.last_name,
+    "Birthday": req.body.birthday,
+    "Nationality": req.body.nationality,
+    "CountryOfResidence": req.body.country_of_residence,
+    "PersonType": "NATURAL",
+    "Email": req.body.email
+  }).then((resultat) => {
+    console.log(resultat)
+    res.json(resultat);
+  }).catch((err) => {
+    console.log(err);
+    res.json(err);
+  });
+});
+
 app.post('/createWallet', (req, res, next) => {
   MangoApi.Wallets.create({
     "Owners": req.body.owners, // ['73723']
