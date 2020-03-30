@@ -35,5 +35,5 @@ expo start
 ## Screenshot
 
 <div align="center">
-  <img src="https://github.com/maxgfr/expo-video-player/blob/master/.github/screen.png" height="540" width="280"/>
+  <img src="https://github.com/maxgfr/expo-mangopay/blob/master/.github/screen.png" height="540" width="280"/>
 </div>
